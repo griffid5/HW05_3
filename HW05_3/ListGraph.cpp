@@ -16,7 +16,7 @@
 
 class ListGraph : public Graph {
 	ListGraph::ListGraph(int numNodes) {
-
+	
 	}
 
 	ListGraph::~ListGraph() {
