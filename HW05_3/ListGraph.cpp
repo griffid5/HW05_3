@@ -10,44 +10,95 @@
 * give attribution. Commercial uses are allowed.
 */
 
-# include "Graph.h"
 # include "ListGraph.h"
-# include <vector>
 
-class ListGraph : public Graph {
 	ListGraph::ListGraph(int numNodes) {
-	
+		num_edges = 0;
+		edgeList.resize(numNodes);
 	}
 
 	ListGraph::~ListGraph() {
 
 	}
 	
-	// Modifier
+   /*
+   * Add a weighted, undirected edge between nodes u and v.
+   * 
+   * Preconditions: 
+   *     u and v are legal labels (i.e. 0 <= u < edgeList.size(), 0 <= v < edgeList.size())
+   *     u != v
+   *     There is no edge between u and v.
+   *     weight > 0
+   */
+   // @note The structure of this method comes from https://github.com/Taylor-Reid/HW05_TaylorReid/
 	void ListGraph::addEdge(NodeID u, NodeID v, EdgeWeight weight) {
-
+		EList::const_iterator itera;
+		NWPair test; 
+		if ((0 <= u < edgeList.size() && 0 <= v < edgeList.size()) && (u != v) && (weight > 0)) {
+			EList::const_iterator itera;
+			for (itera = edgeList.at(u).begin(); itera != edgeList.at(u).end(); itera++) {
+				test = *itera;
+				if (test.first == v && test.second == weight) {
+					return;
+				}
+			}
+		}
+			edgeList.at(u).push_back(NWPair(v, weight));
+			edgeList.at(v).push_back(NWPair(u, weight));
+			num_edges++;
 	}
 
-	// Inspectors
-	ListGraph:: EdgeWeight(NodeID u, NodeID v) const {
-		return list;
+   /*
+   * Get the weight between nodes u and v; return 0 if there is no edge.
+   *
+   * Preconditions: 
+   *     u and v are legal labels (i.e. 0 <= u < edgeList.size(), 0 <= v < edgeList.size())
+   */
+	EdgeWeight ListGraph:: weight(NodeID u, NodeID v) const {
+		EList::const_iterator itera;
+		NWPair test;
+		if (u >= 0 && u < edgeList.size() && v >= 0 && v < edgeList.size() && u != v) {
+			for (itera = edgeList.at(u).begin(); itera != edgeList.at(u).end(); itera++) {
+				test = *itera;
+				if (test.first == v) {
+					return test.second;
+				}
+			}
+		}
+		return 0;
 	}
 	
-	std::list<NWPair> getAdj(NodeID u) const {
-		return num_neighbors;
+   /*
+   * Return a list of NodeID/EdgeWeight pairs describing the nodes adjacent to edge u.
+   *
+   * Preconditions: u is a legal label.
+   */
+	std::list<NWPair> ListGraph::getAdj(NodeID u) const {
+		if (0 <= u < edgeList.size()) {
+			return edgeList.at(u);
+		}
 	}
 
-	ListGraph:: unsigned degree(NodeID u) const {
-		return numNodes;
+   /*
+   * Return the degree (i.e. the number of neighorbs) of node u.
+   *
+   * Preconditions: u is a legal label;
+   */
+	unsigned ListGraph::degree(NodeID u) const {
+		if (0 <= u < edgeList.size()) {
+			return getAdj(u).size();
+		}
 	}
 
-	ListGraph::unsigned Size() const {
-		return numNodes;
+   /*
+   * Return the number of nodes in the graph.
+   */
+	unsigned ListGraph::size() const {
+		return edgeList.size();
 	}
-
-	ListGraph::unsigned numEdges() const {
+   /* 
+   * Return the number of edges in the graph.
+   */
+	unsigned ListGraph:: numEdges() const {
 		return num_edges;
 	}
-
-
-}
